@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Rifa Plan San Andrés</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+
+      .info {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 8px;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      .numero {
+        padding: 10px;
+        border-radius: 6px;
+        background: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .pago {
+        background: #27ae60;
+        color: white;
+      }
+
+      .pendente {
+        background: #f39c12;
+        color: white;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 350px;
+        margin: 12% auto;
+      }
+
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0;
+      }
+
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+      }
+      .whatsapp {
+        background: #25d366;
+      }
+      .cancelar {
+        background: #e74c3c;
+      }
+      .zerar {
+        background: #555;
+      }
+
+      .info-valores {
+        margin: 10px 0;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="info">
+        <h1>Rifa Plan San Andrés</h1>
+        <p><b>Sorteo:</b> 06 de mayo con la Lotería del Meta</p>
+        <p>
+          <strong>Premio:<br />Viaje para 2 personas todo incluido</strong>
+        </p>
+        <p><b>Valor por número:</b> $50.000 COP</p>
+      </div>
+
+      <h3>Elige tu número</h3>
+      <div class="grid" id="rifa"></div>
+    </div>
+
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <h3 id="numeroSelecionado"></h3>
+
+        <input id="nome" placeholder="Nombre" />
+        <input id="telefone" placeholder="Teléfono" />
+        <input id="valor" type="number" placeholder="Agregar pago" />
+
+        <div class="info-valores" id="totalPago"></div>
+        <div class="info-valores" id="faltante"></div>
+
+        <button onclick="salvar()">Guardar</button>
+        <button class="whatsapp" onclick="enviarWhats()">WhatsApp</button>
+        <button class="cancelar" onclick="fechar()">Cancelar</button>
+        <button class="zerar" onclick="zerarNumero()">Liberar número</button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDocs,
+        deleteDoc,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      // CONFIG FIREBASE
+      const firebaseConfig = {
+        apiKey: "AIzaSyCVpd_OrRd1vf-RpZip8tAmxy1AyQOzmPg",
+        authDomain: "rifa-san-andres.firebaseapp.com",
+        projectId: "rifa-san-andres",
+        storageBucket: "rifa-san-andres.firebasestorage.app",
+        messagingSenderId: "43434845716",
+        appId: "1:43434845716:web:ee8cb0e8ad3bd943f76901",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const VALOR_TOTAL = 50000;
+
+      const rifa = document.getElementById("rifa");
+      const modal = document.getElementById("modal");
+
+      let numeroAtual = null;
+      let dados = {};
+
+      // CRIAR NUMEROS
+      for (let i = 0; i <= 99; i++) {
+        let numero = document.createElement("div");
+        numero.textContent = String(i).padStart(2, "0");
+        numero.classList.add("numero");
+
+        numero.onclick = () => abrir(numero.textContent);
+        rifa.appendChild(numero);
+      }
+
+      // CARREGAR DADOS
+      async function carregar() {
+        const snapshot = await getDocs(collection(db, "rifa"));
+
+        snapshot.forEach((docSnap) => {
+          dados[docSnap.id] = docSnap.data();
+        });
+
+        atualizarTela();
+      }
+
+      function atualizarTela() {
+        document.querySelectorAll(".numero").forEach((n) => {
+          let d = dados[n.textContent];
+
+          n.classList.remove("pago", "pendente");
+
+          if (d) {
+            n.classList.add(d.estado);
+          }
+        });
+      }
+
+      function abrir(numero) {
+        numeroAtual = numero;
+        modal.style.display = "block";
+
+        let d = dados[numero] || {};
+
+        document.getElementById("numeroSelecionado").innerText =
+          "Número: " + numero;
+        document.getElementById("nome").value = d.nome || "";
+        document.getElementById("telefone").value = d.telefone || "";
+        document.getElementById("valor").value = "";
+
+        document
+          .getElementById("valor")
+          .addEventListener("input", atualizarValores);
+
+        atualizarValores();
+      }
+
+      function atualizarValores() {
+        let total = dados[numeroAtual]?.valor || 0;
+        let falta = VALOR_TOTAL - total;
+
+        document.getElementById("totalPago").innerText =
+          "Total pagado: $ " + total;
+        document.getElementById("faltante").innerText =
+          "Falta: $ " + (falta > 0 ? falta : 0);
+      }
+
+      function fechar() {
+        modal.style.display = "none";
+      }
+
+      async function salvar() {
+        let nome = document.getElementById("nome").value;
+        let telefone = document.getElementById("telefone").value;
+        let valorNovo = parseInt(document.getElementById("valor").value) || 0;
+
+        let antigo = dados[numeroAtual] || {};
+        let total = (antigo.valor || 0) + valorNovo;
+
+        let estado = total >= VALOR_TOTAL ? "pago" : "pendente";
+
+        let novo = {
+          nome: nome || antigo.nome || "",
+          telefone: telefone || antigo.telefone || "",
+          valor: total,
+          estado,
+        };
+
+        await setDoc(doc(db, "rifa", numeroAtual), novo);
+
+        dados[numeroAtual] = novo;
+
+        atualizarTela();
+        fechar();
+      }
+
+      async function zerarNumero() {
+        if (!confirm("¿Seguro que deseas liberar este número?")) return;
+
+        await deleteDoc(doc(db, "rifa", numeroAtual));
+
+        delete dados[numeroAtual];
+
+        atualizarTela();
+        fechar();
+      }
+
+      function enviarWhats() {
+        let d = dados[numeroAtual] || {};
+
+        if (!d.telefone) {
+          alert("Digite o telefone primeiro");
+          return;
+        }
+
+        let msg = `Rifa Plan San Andrés
+Número: ${numeroAtual}
+Nombre: ${d.nome || ""}
+Teléfono: ${d.telefone}
+Total pagado: $ ${d.valor || 0}
+Falta: $ ${Math.max(0, VALOR_TOTAL - (d.valor || 0))}`;
+
+        window.open(
+          `https://wa.me/57${d.telefone}?text=${encodeURIComponent(msg)}`,
+        );
+      }
+
+      // 🔥 CORREÇÃO DOS BOTÕES
+      window.salvar = salvar;
+      window.fechar = fechar;
+      window.zerarNumero = zerarNumero;
+      window.enviarWhats = enviarWhats;
+
+      // INICIAR
+      carregar();
+    </script>
+  </body>
+</html>
