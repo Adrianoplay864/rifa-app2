@@ -191,9 +191,9 @@ const modal = document.getElementById("modal")
 let numeroAtual = null
 let dados = JSON.parse(localStorage.getItem("rifaDados")) || {}
 
-for(let i=0;i<=999;i++){
+for(let i=0;i<=99;i++){
   let numero = document.createElement("div")
-  numero.textContent = String(i).padStart(3,"0")
+  numero.textContent = String(i).padStart(2,"0")
   numero.classList.add("numero")
 
   if(dados[numero.textContent]){
