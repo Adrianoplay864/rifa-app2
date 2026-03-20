@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rifa Plan San Andrés</title>
+
+<link rel="manifest" id="manifestPlaceholder">
+<meta name="theme-color" content="#3498db">
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
+  margin:0;
+  padding:20px;
+  text-align:center;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+}
+
+.info{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(60px, 1fr));
+  gap:8px;
+  max-height:70vh;
+  overflow-y:auto;
+}
+
+.numero{
+  padding:10px;
+  border-radius:6px;
+  background:white;
+  border:1px solid #ddd;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.pago{
+  background:#27ae60;
+  color:white;
+}
+
+.pendente{
+  background:#f39c12;
+  color:white;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+}
+
+.modal-content{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  max-width:350px;
+  margin:12% auto;
+}
+
+input,select,button{
+  width:100%;
+  padding:10px 0;
+  margin:6px 0;
+}
+
+button{background:#3498db;color:white;border:none;}
+.whatsapp{background:#25D366;}
+.cancelar{background:#e74c3c;}
+.zerar{background:#555;}
+
+.info-valores{
+  margin:10px 0;
+  font-weight:bold;
+}
+
+@media(max-width:480px){
+  .grid{
+    grid-template-columns:repeat(auto-fit, minmax(45px, 1fr));
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="info">
+<h1>Rifa Plan San Andrés</h1>
+
+<p><b>Sorteo:</b> 06 de mayo con la Lotería del Meta</p>
+
+<p><strong>
+Premio:<br>
+Viaje para 2 personas con todo incluido a San Andrés
+</strong></p>
+
+<p><b>Valor por número:</b> $50.000 COP</p>
+
+</div>
+
+<h3>Elige tu número</h3>
+
+<div class="grid" id="rifa"></div>
+
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-content">
+
+<h3 id="numeroSelecionado"></h3>
+
+<input type="text" id="nome" placeholder="Nombre">
+<input type="text" id="telefone" placeholder="Teléfono">
+
+<input type="number" id="valor" placeholder="Agregar pago ($)">
+
+<div class="info-valores" id="totalPago"></div>
+<div class="info-valores" id="faltante"></div>
+
+<select id="estado">
+<option value="pendente">Pendiente</option>
+<option value="pago">Pagado</option>
+</select>
+
+<button onclick="salvar()">Guardar</button>
+<button class="whatsapp" onclick="enviarWhats()">WhatsApp</button>
+<button class="cancelar" onclick="fechar()">Cancelar</button>
+<button class="zerar" onclick="zerarNumero()">Liberar número</button>
+
+</div>
+</div>
+
+<script>
+
+/* CONFIG */
+const VALOR_TOTAL = 50000
+
+/* MANIFEST */
+const manifest = {
+  name: "Rifa Plan San Andrés",
+  short_name: "Rifa",
+  start_url: ".",
+  display: "standalone",
+  background_color: "#f4f6f9",
+  theme_color: "#3498db"
+};
+
+document.getElementById("manifestPlaceholder")
+.setAttribute("href", URL.createObjectURL(new Blob([JSON.stringify(manifest)])))
+
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+  const sw = `
+    const CACHE="rifa-v1";
+    self.addEventListener("install",e=>{
+      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["./"])))
+    });
+    self.addEventListener("fetch",e=>{
+      e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))
+    });
+  `;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw])))
+}
+
+/* APP */
+
+const rifa = document.getElementById("rifa")
+const modal = document.getElementById("modal")
+
+let numeroAtual = null
+let dados = JSON.parse(localStorage.getItem("rifaDados")) || {}
+
+for(let i=0;i<=99;i++){
+  let numero = document.createElement("div")
+  numero.textContent = String(i).padStart(2,"0")
+  numero.classList.add("numero")
+
+  if(dados[numero.textContent]){
+    numero.classList.add(dados[numero.textContent].estado)
+  }
+
+  numero.onclick = () => abrir(numero.textContent)
+  rifa.appendChild(numero)
+}
+
+function abrir(numero){
+
+  numeroAtual = numero
+  document.getElementById("numeroSelecionado").innerText = "Número: "+numero
+  modal.style.display="block"
+
+  let d = dados[numero] || {}
+
+  document.getElementById("nome").value = d.nome || ""
+  document.getElementById("telefone").value = d.telefone || ""
+  document.getElementById("estado").value = d.estado || "pendente"
+  document.getElementById("valor").value = ""
+
+  atualizarValores()
+}
+
+function atualizarValores(){
+
+  let total = parseFloat(dados[numeroAtual]?.valor) || 0
+  let falta = VALOR_TOTAL - total
+
+  if(falta < 0) falta = 0
+
+  document.getElementById("totalPago").innerText = "Total pagado: $ " + total
+  document.getElementById("faltante").innerText = "Falta: $ " + falta
+}
+
+function fechar(){
+  modal.style.display="none"
+}
+
+function salvar(){
+
+  let nome = document.getElementById("nome").value
+  let telefone = document.getElementById("telefone").value
+
+  let valorNovo = parseFloat(document.getElementById("valor").value) || 0
+
+  let antigo = dados[numeroAtual] || {}
+  let total = (parseFloat(antigo.valor) || 0) + valorNovo
+
+  let estado = total >= VALOR_TOTAL ? "pago" : "pendente"
+
+  dados[numeroAtual] = {
+    nome: nome || antigo.nome || "",
+    telefone: telefone || antigo.telefone || "",
+    estado,
+    valor: total
+  }
+
+  localStorage.setItem("rifaDados", JSON.stringify(dados))
+
+  document.querySelectorAll(".numero").forEach(n=>{
+    if(n.textContent === numeroAtual){
+      n.classList.remove("pago","pendente")
+      n.classList.add(estado)
+    }
+  })
+
+  fechar()
+}
+
+function zerarNumero(){
+
+  if(!confirm("¿Seguro que deseas liberar este número?")) return
+
+  delete dados[numeroAtual]
+
+  localStorage.setItem("rifaDados", JSON.stringify(dados))
+
+  document.querySelectorAll(".numero").forEach(n=>{
+    if(n.textContent === numeroAtual){
+      n.classList.remove("pago","pendente")
+    }
+  })
+
+  fechar()
+}
+
+function enviarWhats(){
+
+  let d = dados[numeroAtual] || {}
+
+  let msg = `Rifa Plan San Andrés
+Número: ${numeroAtual}
+Nombre: ${d.nome || ""}
+Teléfono: ${d.telefone || ""}
+Total pagado: $ ${d.valor || 0}
+Falta: $ ${Math.max(0, VALOR_TOTAL - (d.valor || 0))}`
+
+  window.open(`https://wa.me/57${d.telefone}?text=${encodeURIComponent(msg)}`)
+}
+
+</script>
+
+</body>
+</html>
