@@ -106,6 +106,14 @@
     <div class="container">
       <div class="info">
         <h1>Rifa Plan San Andrés</h1>
+
+        <!-- NOVO: ADMIN -->
+        <button onclick="login()">Login Admin</button>
+        <button onclick="logout()">Sair</button>
+        <button id="verLista" onclick="abrirLista()" style="display: none">
+          Ver Compradores
+        </button>
+
         <p><b>Sorteo:</b> 06 de mayo con la Lotería del Meta</p>
         <p>
           <strong>Premio:<br />Viaje para 2 personas todo incluido</strong>
@@ -117,6 +125,7 @@
       <div class="grid" id="rifa"></div>
     </div>
 
+    <!-- MODAL COMPRA -->
     <div class="modal" id="modal">
       <div class="modal-content">
         <h3 id="numeroSelecionado"></h3>
@@ -135,6 +144,18 @@
       </div>
     </div>
 
+    <!-- NOVO: MODAL LISTA -->
+    <div class="modal" id="modalLista">
+      <div class="modal-content" style="max-width: 600px">
+        <h3>Lista de Compradores</h3>
+        <div
+          id="listaCompradores"
+          style="text-align: left; max-height: 400px; overflow: auto"
+        ></div>
+        <button onclick="fecharLista()">Fechar</button>
+      </div>
+    </div>
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
       import {
@@ -146,7 +167,15 @@
         collection,
       } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-      // CONFIG FIREBASE
+      // NOVO: AUTH
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
       const firebaseConfig = {
         apiKey: "AIzaSyCVpd_OrRd1vf-RpZip8tAmxy1AyQOzmPg",
         authDomain: "rifa-san-andres.firebaseapp.com",
@@ -159,6 +188,35 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
+      // NOVO: AUTH CONFIG
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const ADMIN_EMAIL = "heiderscheidt28@gmail.com";
+      let usuarioLogado = false;
+
+      const btnLista = document.getElementById("verLista");
+
+      onAuthStateChanged(auth, (user) => {
+        if (user && user.email === ADMIN_EMAIL) {
+          usuarioLogado = true;
+          btnLista.style.display = "block";
+        } else {
+          usuarioLogado = false;
+          btnLista.style.display = "none";
+        }
+      });
+
+      window.login = async () => {
+        try {
+          const result = await signInWithPopup(auth, provider);
+          alert("Logado como: " + result.user.email);
+        } catch {
+          alert("Erro no login");
+        }
+      };
+
+      window.logout = () => signOut(auth);
+
       const VALOR_TOTAL = 50000;
 
       const rifa = document.getElementById("rifa");
@@ -167,7 +225,6 @@
       let numeroAtual = null;
       let dados = {};
 
-      // CRIAR NUMEROS
       for (let i = 0; i <= 99; i++) {
         let numero = document.createElement("div");
         numero.textContent = String(i).padStart(2, "0");
@@ -177,7 +234,6 @@
         rifa.appendChild(numero);
       }
 
-      // CARREGAR DADOS
       async function carregar() {
         const snapshot = await getDocs(collection(db, "rifa"));
 
@@ -234,6 +290,8 @@
       }
 
       async function salvar() {
+        if (!usuarioLogado) return alert("Solo administrador");
+
         let nome = document.getElementById("nome").value;
         let telefone = document.getElementById("telefone").value;
         let valorNovo = parseInt(document.getElementById("valor").value) || 0;
@@ -259,6 +317,7 @@
       }
 
       async function zerarNumero() {
+        if (!usuarioLogado) return alert("Solo administrador");
         if (!confirm("¿Seguro que deseas liberar este número?")) return;
 
         await deleteDoc(doc(db, "rifa", numeroAtual));
@@ -289,13 +348,45 @@ Falta: $ ${Math.max(0, VALOR_TOTAL - (d.valor || 0))}`;
         );
       }
 
-      // 🔥 CORREÇÃO DOS BOTÕES
+      // LISTA
+      const modalLista = document.getElementById("modalLista");
+      const listaCompradores = document.getElementById("listaCompradores");
+
+      window.abrirLista = () => {
+        if (!usuarioLogado) return alert("Solo administrador");
+
+        listaCompradores.innerHTML = "";
+
+        Object.keys(dados).forEach((num) => {
+          let d = dados[num];
+
+          let item = document.createElement("div");
+          item.style.padding = "10px";
+          item.style.borderBottom = "1px solid #ddd";
+
+          item.innerHTML = `
+            <b>Número:</b> ${num}<br>
+            <b>Nombre:</b> ${d.nome || "-"}<br>
+            <b>Teléfono:</b> ${d.telefone || "-"}<br>
+            <b>Total Pagado:</b> $ ${d.valor || 0}<br>
+            <b>Estado:</b> ${d.estado}
+          `;
+
+          listaCompradores.appendChild(item);
+        });
+
+        modalLista.style.display = "block";
+      };
+
+      window.fecharLista = () => {
+        modalLista.style.display = "none";
+      };
+
       window.salvar = salvar;
       window.fechar = fechar;
       window.zerarNumero = zerarNumero;
       window.enviarWhats = enviarWhats;
 
-      // INICIAR
       carregar();
     </script>
   </body>
