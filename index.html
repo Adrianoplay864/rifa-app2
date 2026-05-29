@@ -1,393 +1,657 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Rifa Plan San Andrés</title>
-
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Rifa Santa Marta | Hotel Sansiraka · 3N/4D</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #eef2f5 0%, #d9e2e8 100%);
+      margin: 0;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Header premium card */
+    .hero-card {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      transition: all 0.2s;
+    }
+    .hero-top {
+      background: linear-gradient(135deg, #1F5E3A 0%, #2A9D6E 100%);
+      padding: 1.5rem 2rem;
+      color: white;
+      text-align: center;
+    }
+    .hero-top h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      letter-spacing: -0.3px;
+      font-weight: 800;
+    }
+    .hero-top h1 small {
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: block;
+      opacity: 0.9;
+      margin-top: 6px;
+    }
+    .badge-premium {
+      background: #FFC107;
+      color: #1F3B2C;
+      padding: 6px 14px;
+      border-radius: 60px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      background: #FEF9E6;
+      padding: 1rem 2rem;
+      gap: 1rem;
+      border-bottom: 1px solid #ffe2b5;
+    }
+    .info-item {
+      flex: 1;
+      min-width: 150px;
+    }
+    .info-item strong {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #B45F1B;
+      letter-spacing: 1px;
+    }
+    .info-item span {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1F3B2C;
+    }
+    .includes {
+      padding: 1.2rem 2rem;
+      background: #FCF8E8;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      border-top: 1px solid #FFE0A3;
+    }
+    .includes ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      flex: 2;
+      columns: 2;
+      column-gap: 2rem;
+    }
+    .includes li {
+      margin: 8px 0;
+      font-weight: 500;
+      color: #2c3e2f;
+      break-inside: avoid;
+    }
+    .tagline {
+      font-style: italic;
+      font-weight: 600;
+      color: #2A7F49;
+      background: #E9F5EF;
+      padding: 8px 20px;
+      border-radius: 50px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .admin-bar {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: #2c3e50;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-size: 0.85rem;
+    }
+    button.warning {
+      background: #c0392b;
+    }
+    button.whatsapp {
+      background: #25D366;
+    }
+    button.admin {
+      background: #1f6392;
+    }
+    button.reset-btn {
+      background: #8e44ad;
+    }
+    button:hover {
+      filter: brightness(1.05);
+      transform: scale(0.97);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 12px;
+      background: white;
+      padding: 20px;
+      border-radius: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+    .numero {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 14px 6px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      transition: 0.1s linear;
+      cursor: pointer;
+      color: #1e2a3a;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .numero.pago {
+      background: #27ae60;
+      border-color: #1e8449;
+      color: white;
+      box-shadow: 0 2px 8px rgba(39,174,96,0.4);
+    }
+    .numero.pendente {
+      background: #f39c12;
+      border-color: #e67e22;
+      color: white;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      max-width: 420px;
+      width: 90%;
+      margin: 0 auto;
+      border-radius: 2rem;
+      padding: 1.8rem;
+      animation: fadeInUp 0.2s ease;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      color: #1F5E3A;
+      border-left: 5px solid #2A9D6E;
+      padding-left: 12px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 60px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #2A9D6E;
+    }
+    .info-valores {
+      background: #f0f2f5;
+      padding: 8px 12px;
+      border-radius: 30px;
+      margin: 8px 0;
+      font-weight: bold;
+      text-align: center;
+    }
+    .botones-modal {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+    .botones-modal button {
+      flex: 1;
+      margin: 4px 0;
+    }
+    .footer-stats {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 500;
+      background: #ffffffcc;
+      backdrop-filter: blur(4px);
+      border-radius: 60px;
+      padding: 8px 16px;
+      width: fit-content;
+      margin-inline: auto;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 640px) {
+      .includes ul {
+        columns: 1;
       }
+      .hero-top h1 { font-size: 1.5rem; }
+      .grid { gap: 8px; }
+      .numero { padding: 10px 4px; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- panel de admin flotante -->
+  <div class="admin-bar" id="adminPanel" style="display: none;">
+    <button id="verListaBtn" style="background:#2c6e9e;">📋 Ver compradores</button>
+    <button id="resetRifaBtn" class="reset-btn">⚠️ Resetear rifa (nuevo sorteo)</button>
+  </div>
 
-      .container {
-        max-width: 900px;
-        margin: auto;
-      }
-
-      .info {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-        gap: 8px;
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-
-      .numero {
-        padding: 10px;
-        border-radius: 6px;
-        background: white;
-        border: 1px solid #ddd;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      .pago {
-        background: #27ae60;
-        color: white;
-      }
-
-      .pendente {
-        background: #f39c12;
-        color: white;
-      }
-
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-      }
-
-      .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 350px;
-        margin: 12% auto;
-      }
-
-      input,
-      button {
-        width: 100%;
-        padding: 10px;
-        margin: 6px 0;
-      }
-
-      button {
-        background: #3498db;
-        color: white;
-        border: none;
-      }
-      .whatsapp {
-        background: #25d366;
-      }
-      .cancelar {
-        background: #e74c3c;
-      }
-      .zerar {
-        background: #555;
-      }
-
-      .info-valores {
-        margin: 10px 0;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="container">
-      <div class="info">
-        <h1>Rifa Plan San Andrés</h1>
-
-        <!-- NOVO: ADMIN -->
-        <button onclick="login()">Login Admin</button>
-        <button onclick="logout()">Sair</button>
-        <button id="verLista" onclick="abrirLista()" style="display: none">
-          Ver Compradores
-        </button>
-
-        <p><b>Sorteo:</b> 06 de mayo con la Lotería del Meta</p>
-        <p>
-          <strong>Premio:<br />Viaje para 2 personas todo incluido</strong>
-        </p>
-        <p><b>Valor por número:</b> $50.000 COP</p>
-      </div>
-
-      <h3>Elige tu número</h3>
-      <div class="grid" id="rifa"></div>
+  <div class="hero-card">
+    <div class="hero-top">
+      <h1>🏝️ RIFA PREMIADA SANTA MARTA<br><small>Al estilo SANSIRAKA · 3 noches / 4 días</small></h1>
+      <div class="badge-premium">🎁 Para 2 personas · Todo incluido</div>
     </div>
-
-    <!-- MODAL COMPRA -->
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <h3 id="numeroSelecionado"></h3>
-
-        <input id="nome" placeholder="Nombre" />
-        <input id="telefone" placeholder="Teléfono" />
-        <input id="valor" type="number" placeholder="Agregar pago" />
-
-        <div class="info-valores" id="totalPago"></div>
-        <div class="info-valores" id="faltante"></div>
-
-        <button onclick="salvar()">Guardar</button>
-        <button class="whatsapp" onclick="enviarWhats()">WhatsApp</button>
-        <button class="cancelar" onclick="fechar()">Cancelar</button>
-        <button class="zerar" onclick="zerarNumero()">Liberar número</button>
-      </div>
+    <div class="info-grid">
+      <div class="info-item"><strong>🎟️ Boleta</strong><span>$50.000 COP</span></div>
+      <div class="info-item"><strong>🎲 Sorteo</strong><span>Lotería del Meta<br>📅 15 de agosto 2026</span></div>
+      <div class="info-item"><strong>✈️ Traslados</strong><span>Aeropuerto ⇄ Hotel</span></div>
+      <div class="info-item"><strong>🏨 Alojamiento</strong><span>Hotel Sansiraka</span></div>
     </div>
-
-    <!-- NOVO: MODAL LISTA -->
-    <div class="modal" id="modalLista">
-      <div class="modal-content" style="max-width: 600px">
-        <h3>Lista de Compradores</h3>
-        <div
-          id="listaCompradores"
-          style="text-align: left; max-height: 400px; overflow: auto"
-        ></div>
-        <button onclick="fecharLista()">Fechar</button>
-      </div>
+    <div class="includes">
+      <div style="font-weight:800; color:#1F5E3A;">✨ EL PLAN INCLUYE:</div>
+      <ul>
+        <li>✔️ Traslados Aeropuerto / Hotel / Aeropuerto (3 plazas)</li>
+        <li>✔️ Alojamiento en Hotel Sansiraka</li>
+        <li>✔️ Alimentación según plan seleccionado</li>
+        <li>✔️ Tour Playa Blanca con almuerzo</li>
+        <li>✔️ Asistencia médica total</li>
+        <li>✔️ Desconexión y relax garantizados</li>
+      </ul>
+      <div class="tagline">🌟 Descansa, desconéctate y vive UNA EXPERIENCIA INOLVIDABLE 🌟</div>
     </div>
+  </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-      import {
-        getFirestore,
-        doc,
-        setDoc,
-        getDocs,
-        deleteDoc,
-        collection,
-      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <h3 style="text-align:center; margin-bottom:12px;">🎯 Elige tu número de la suerte (00 al 99)</h3>
+  <div class="grid" id="rifa"></div>
+  <div class="footer-stats" id="statsCounter"></div>
+</div>
 
-      // NOVO: AUTH
-      import {
-        getAuth,
-        signInWithPopup,
-        GoogleAuthProvider,
-        signOut,
-        onAuthStateChanged,
-      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<!-- MODAL COMPRA / ADMIN -->
+<div class="modal" id="modalCompra">
+  <div class="modal-content">
+    <h3 id="numeroSeleccionado">Número: --</h3>
+    <input type="text" id="nombre" placeholder="Nombre completo del comprador" autocomplete="off">
+    <input type="tel" id="telefono" placeholder="Teléfono (ej: 3123456789)" autocomplete="off">
+    <input type="number" id="pagoAdicional" placeholder="💰 Agregar pago (COP)" step="1000" min="0">
+    <div class="info-valores" id="totalPagadoInfo">Total pagado: $0</div>
+    <div class="info-valores" id="saldoPendienteInfo">Falta: $50.000</div>
+    <div class="botones-modal">
+      <button id="guardarPagoBtn">💾 Guardar pago</button>
+      <button id="whatsappBtn" class="whatsapp">📱 WhatsApp al comprador</button>
+      <button id="liberarNumeroBtn" class="warning">🔓 Liberar número</button>
+      <button id="cerrarModalBtn">❌ Cerrar</button>
+    </div>
+  </div>
+</div>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyCVpd_OrRd1vf-RpZip8tAmxy1AyQOzmPg",
-        authDomain: "rifa-san-andres.firebaseapp.com",
-        projectId: "rifa-san-andres",
-        storageBucket: "rifa-san-andres.firebasestorage.app",
-        messagingSenderId: "43434845716",
-        appId: "1:43434845716:web:ee8cb0e8ad3bd943f76901",
-      };
+<!-- MODAL LISTA DE COMPRADORES -->
+<div class="modal" id="modalLista">
+  <div class="modal-content" style="max-width:650px;">
+    <h3>📋 Lista de participantes y pagos</h3>
+    <div id="listaCompradoresContainer" style="max-height: 60vh; overflow-y: auto; margin: 1rem 0;"></div>
+    <button id="closeListaBtn">Cerrar</button>
+  </div>
+</div>
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDocs, deleteDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-      // NOVO: AUTH CONFIG
-      const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
-      const ADMIN_EMAIL = "heiderscheidt28@gmail.com";
-      let usuarioLogado = false;
+  // ---------- CONFIGURACIÓN FIREBASE ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVpd_OrRd1vf-RpZip8tAmxy1AyQOzmPg",
+    authDomain: "rifa-san-andres.firebaseapp.com",
+    projectId: "rifa-san-andres",
+    storageBucket: "rifa-san-andres.firebasestorage.app",
+    messagingSenderId: "43434845716",
+    appId: "1:43434845716:web:ee8cb0e8ad3bd943f76901",
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const ADMIN_EMAIL = "heiderscheidt28@gmail.com";
+  const VALOR_TOTAL_BOLETA = 50000;  // 50 mil COP
 
-      const btnLista = document.getElementById("verLista");
-
-      onAuthStateChanged(auth, (user) => {
-        if (user && user.email === ADMIN_EMAIL) {
-          usuarioLogado = true;
-          btnLista.style.display = "block";
-        } else {
-          usuarioLogado = false;
-          btnLista.style.display = "none";
-        }
-      });
-
-      window.login = async () => {
-        try {
-          const result = await signInWithPopup(auth, provider);
-          alert("Logado como: " + result.user.email);
-        } catch {
-          alert("Erro no login");
-        }
-      };
-
-      window.logout = () => signOut(auth);
-
-      const VALOR_TOTAL = 50000;
-
-      const rifa = document.getElementById("rifa");
-      const modal = document.getElementById("modal");
-
-      let numeroAtual = null;
-      let dados = {};
-
-      for (let i = 0; i <= 99; i++) {
-        let numero = document.createElement("div");
-        numero.textContent = String(i).padStart(2, "0");
-        numero.classList.add("numero");
-
-        numero.onclick = () => abrir(numero.textContent);
-        rifa.appendChild(numero);
+  let usuarioAdmin = false;
+  let datosNumeros = {};      // { "00": {nombre, telefono, valor, estado}, ... }
+  let numeroActual = null;
+  
+  // Elementos DOM
+  const rifaGrid = document.getElementById("rifa");
+  const modalCompra = document.getElementById("modalCompra");
+  const modalListaDiv = document.getElementById("modalLista");
+  const spanNumeroSeleccionado = document.getElementById("numeroSeleccionado");
+  const inputNombre = document.getElementById("nombre");
+  const inputTelefono = document.getElementById("telefono");
+  const inputPago = document.getElementById("pagoAdicional");
+  const totalPagadoSpan = document.getElementById("totalPagadoInfo");
+  const saldoPendienteSpan = document.getElementById("saldoPendienteInfo");
+  const adminPanelDiv = document.getElementById("adminPanel");
+  const statsSpan = document.getElementById("statsCounter");
+  
+  // helpers UI
+  function actualizarEstadisticas() {
+    const totalNumeros = 100;
+    const vendidosPago = Object.values(datosNumeros).filter(d => d.estado === "pago").length;
+    const pendientes = Object.values(datosNumeros).filter(d => d.estado === "pendente").length;
+    const disponibles = totalNumeros - (vendidosPago + pendientes);
+    statsSpan.innerHTML = `🎫 Disponibles: ${disponibles} | 🟢 Pagados: ${vendidosPago} | 🟡 Reservados: ${pendientes} | Total números: ${totalNumeros}`;
+  }
+  
+  // actualizar colores en grid
+  function actualizarGrilla() {
+    document.querySelectorAll(".numero").forEach(el => {
+      const num = el.getAttribute("data-num");
+      const data = datosNumeros[num];
+      el.classList.remove("pago", "pendente");
+      if (data) {
+        el.classList.add(data.estado);
       }
-
-      async function carregar() {
-        const snapshot = await getDocs(collection(db, "rifa"));
-
-        snapshot.forEach((docSnap) => {
-          dados[docSnap.id] = docSnap.data();
-        });
-
-        atualizarTela();
+    });
+    actualizarEstadisticas();
+  }
+  
+  // cargar datos desde Firestore
+  async function cargarDatos() {
+    const snapshot = await getDocs(collection(db, "rifa"));
+    datosNumeros = {};
+    snapshot.forEach(docSnap => {
+      datosNumeros[docSnap.id] = docSnap.data();
+    });
+    actualizarGrilla();
+  }
+  
+  // crear grid visual (00..99)
+  function crearGrilla() {
+    rifaGrid.innerHTML = "";
+    for (let i = 0; i <= 99; i++) {
+      const numeroStr = i.toString().padStart(2, "0");
+      const divNum = document.createElement("div");
+      divNum.textContent = numeroStr;
+      divNum.classList.add("numero");
+      divNum.setAttribute("data-num", numeroStr);
+      divNum.addEventListener("click", () => abrirModalNumero(numeroStr));
+      rifaGrid.appendChild(divNum);
+    }
+    actualizarGrilla();
+  }
+  
+  // abre modal con info del número
+  function abrirModalNumero(numero) {
+    if (!usuarioAdmin) {
+      alert("🔐 Solo administradores pueden gestionar la rifa. Inicia sesión con Google (admin).");
+      return;
+    }
+    numeroActual = numero;
+    const data = datosNumeros[numero] || { nombre: "", telefono: "", valor: 0, estado: "pendente" };
+    spanNumeroSeleccionado.innerText = `🎲 Número: ${numero}`;
+    inputNombre.value = data.nombre || "";
+    inputTelefono.value = data.telefono || "";
+    inputPago.value = "";
+    actualizarInfoPagos();
+    modalCompra.style.display = "flex";
+  }
+  
+  function actualizarInfoPagos() {
+    const data = datosNumeros[numeroActual] || { valor: 0 };
+    const pagado = data.valor || 0;
+    const falta = VALOR_TOTAL_BOLETA - pagado;
+    totalPagadoSpan.innerText = `💰 Total pagado: $ ${pagado.toLocaleString()} COP`;
+    saldoPendienteSpan.innerText = `⏳ Saldo pendiente: $ ${falta > 0 ? falta.toLocaleString() : 0} COP`;
+    if (falta <= 0) {
+      saldoPendienteSpan.style.background = "#d4edda";
+    } else {
+      saldoPendienteSpan.style.background = "#fff3cd";
+    }
+  }
+  
+  // guardar pago adicional
+  async function guardarPago() {
+    if (!usuarioAdmin) return alert("Acceso denegado.");
+    if (!numeroActual) return;
+    const nombre = inputNombre.value.trim();
+    const telefono = inputTelefono.value.trim();
+    let pagoExtra = parseInt(inputPago.value) || 0;
+    if (pagoExtra < 0) pagoExtra = 0;
+    const existente = datosNumeros[numeroActual] || { nombre: "", telefono: "", valor: 0 };
+    const nuevoValor = (existente.valor || 0) + pagoExtra;
+    if (nuevoValor > VALOR_TOTAL_BOLETA) {
+      alert(`El pago excede el valor total de la boleta ($50.000). Solo se permite hasta completar. Puedes ajustar.`);
+      return;
+    }
+    const estadoFinal = nuevoValor >= VALOR_TOTAL_BOLETA ? "pago" : "pendente";
+    const nuevoRegistro = {
+      nombre: nombre || existente.nombre || "",
+      telefono: telefono || existente.telefono || "",
+      valor: nuevoValor,
+      estado: estadoFinal,
+    };
+    await setDoc(doc(db, "rifa", numeroActual), nuevoRegistro);
+    datosNumeros[numeroActual] = nuevoRegistro;
+    actualizarGrilla();
+    actualizarInfoPagos();
+    if (estadoFinal === "pago") {
+      alert(`✅ ¡Número ${numeroActual} marcado como PAGADO! Total: $${nuevoValor.toLocaleString()}`);
+    } else {
+      alert(`💵 Pago registrado. Total acumulado: $${nuevoValor.toLocaleString()}. Restan $${VALOR_TOTAL_BOLETA - nuevoValor} para completar.`);
+    }
+    modalCompra.style.display = "none";
+  }
+  
+  async function liberarNumero() {
+    if (!usuarioAdmin) return alert("Solo admin");
+    if (!numeroActual) return;
+    const confirmar = confirm(`⚠️ ¿Eliminar TODOS los datos del número ${numeroActual}? Se perderán pagos registrados. Esta acción es irreversible.`);
+    if (!confirmar) return;
+    await deleteDoc(doc(db, "rifa", numeroActual));
+    delete datosNumeros[numeroActual];
+    actualizarGrilla();
+    modalCompra.style.display = "none";
+    alert(`Número ${numeroActual} liberado correctamente. Ahora está disponible.`);
+  }
+  
+  function enviarWhatsApp() {
+    if (!numeroActual) return;
+    const data = datosNumeros[numeroActual];
+    if (!data || !data.telefono) {
+      alert("⚠️ Primero registra un teléfono para el comprador.");
+      return;
+    }
+    let telefonoRaw = data.telefono.replace(/\D/g, '');
+    if (!telefonoRaw.startsWith("57")) telefonoRaw = "57" + telefonoRaw;
+    const pagado = data.valor || 0;
+    const saldo = VALOR_TOTAL_BOLETA - pagado;
+    const mensaje = `🏝️ *RIFA SANTA MARTA - HOTEL SANSIRAKA* 🏨\n✨ Premio: Viaje 3N/4D para 2 personas todo incluido + Tour Playa Blanca\n🎫 *Número:* ${numeroActual}\n👤 *Comprador:* ${data.nombre || "—"}\n💵 *Total pagado:* $${pagado.toLocaleString()} COP\n💰 *Saldo pendiente:* $${saldo > 0 ? saldo.toLocaleString() : 0} COP\n🎲 Sorteo con Lotería del Meta. ¡Mucha suerte! 🌟`;
+    const url = `https://wa.me/${telefonoRaw}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  }
+  
+  // Mostrar lista completa (SOLO ADMIN)
+  async function mostrarListaCompradores() {
+    if (!usuarioAdmin) return;
+    const container = document.getElementById("listaCompradoresContainer");
+    container.innerHTML = "";
+    const numerosOrdenados = Object.keys(datosNumeros).sort((a,b) => parseInt(a) - parseInt(b));
+    if (numerosOrdenados.length === 0) {
+      container.innerHTML = "<p>✨ No hay números vendidos o reservados aún.</p>";
+      modalListaDiv.style.display = "flex";
+      return;
+    }
+    for (let num of numerosOrdenados) {
+      const d = datosNumeros[num];
+      const estadoTexto = d.estado === "pago" ? "✅ PAGADO" : "🟡 RESERVADO / PAGO PARCIAL";
+      const divItem = document.createElement("div");
+      divItem.style.background = "#f9f9f9";
+      divItem.style.margin = "8px 0";
+      divItem.style.padding = "12px";
+      divItem.style.borderRadius = "24px";
+      divItem.style.borderLeft = `6px solid ${d.estado === "pago" ? "#27ae60" : "#f39c12"}`;
+      divItem.innerHTML = `
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><b>🎯 Número ${num}</b> <span style="background:#eee; border-radius:30px; padding:2px 12px;">${estadoTexto}</span></div>
+        <div><span>🧑‍💼 ${d.nombre || "Sin nombre"}</span> | 📞 ${d.telefono || "Sin teléfono"}</div>
+        <div>💰 Abonado: $${(d.valor || 0).toLocaleString()} COP | 🧾 Falta: $${Math.max(0, VALOR_TOTAL_BOLETA - (d.valor || 0)).toLocaleString()} COP</div>
+      `;
+      container.appendChild(divItem);
+    }
+    modalListaDiv.style.display = "flex";
+  }
+  
+  async function resetearTodaRifa() {
+    if (!usuarioAdmin) return;
+    const confirmacion = confirm("🚨 RESET COMPLETO: Se eliminarán TODOS los números vendidos, pagos y datos de compradores. ¿Seguro que deseas iniciar una nueva rifa desde cero? (acción irreversible)");
+    if (!confirmacion) return;
+    const snapshot = await getDocs(collection(db, "rifa"));
+    const promesas = [];
+    snapshot.forEach(docSnap => {
+      promesas.push(deleteDoc(doc(db, "rifa", docSnap.id)));
+    });
+    await Promise.all(promesas);
+    datosNumeros = {};
+    actualizarGrilla();
+    alert("✅ Rifa completamente reiniciada. Todos los números están disponibles. ¡Nuevo sorteo activo!");
+  }
+  
+  // ---------- AUTENTICACIÓN GOOGLE ----------
+  window.login = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      if (result.user.email === ADMIN_EMAIL) {
+        alert(`Bienvenido admin: ${result.user.email}`);
+      } else {
+        await signOut(auth);
+        alert("Acceso restringido: solo el administrador puede gestionar la rifa.");
       }
-
-      function atualizarTela() {
-        document.querySelectorAll(".numero").forEach((n) => {
-          let d = dados[n.textContent];
-
-          n.classList.remove("pago", "pendente");
-
-          if (d) {
-            n.classList.add(d.estado);
-          }
-        });
+    } catch (err) {
+      alert("Error en inicio de sesión: " + err.message);
+    }
+  };
+  
+  window.logout = async () => {
+    await signOut(auth);
+    usuarioAdmin = false;
+    adminPanelDiv.style.display = "none";
+    alert("Sesión cerrada.");
+  };
+  
+  onAuthStateChanged(auth, (user) => {
+    if (user && user.email === ADMIN_EMAIL) {
+      usuarioAdmin = true;
+      adminPanelDiv.style.display = "flex";
+    } else {
+      usuarioAdmin = false;
+      adminPanelDiv.style.display = "none";
+      if (user && user.email !== ADMIN_EMAIL) {
+        signOut(auth);
       }
-
-      function abrir(numero) {
-        numeroAtual = numero;
-        modal.style.display = "block";
-
-        let d = dados[numero] || {};
-
-        document.getElementById("numeroSelecionado").innerText =
-          "Número: " + numero;
-        document.getElementById("nome").value = d.nome || "";
-        document.getElementById("telefone").value = d.telefone || "";
-        document.getElementById("valor").value = "";
-
-        document
-          .getElementById("valor")
-          .addEventListener("input", atualizarValores);
-
-        atualizarValores();
-      }
-
-      function atualizarValores() {
-        let total = dados[numeroAtual]?.valor || 0;
-        let falta = VALOR_TOTAL - total;
-
-        document.getElementById("totalPago").innerText =
-          "Total pagado: $ " + total;
-        document.getElementById("faltante").innerText =
-          "Falta: $ " + (falta > 0 ? falta : 0);
-      }
-
-      function fechar() {
-        modal.style.display = "none";
-      }
-
-      async function salvar() {
-        if (!usuarioLogado) return alert("Solo administrador");
-
-        let nome = document.getElementById("nome").value;
-        let telefone = document.getElementById("telefone").value;
-        let valorNovo = parseInt(document.getElementById("valor").value) || 0;
-
-        let antigo = dados[numeroAtual] || {};
-        let total = (antigo.valor || 0) + valorNovo;
-
-        let estado = total >= VALOR_TOTAL ? "pago" : "pendente";
-
-        let novo = {
-          nome: nome || antigo.nome || "",
-          telefone: telefone || antigo.telefone || "",
-          valor: total,
-          estado,
-        };
-
-        await setDoc(doc(db, "rifa", numeroAtual), novo);
-
-        dados[numeroAtual] = novo;
-
-        atualizarTela();
-        fechar();
-      }
-
-      async function zerarNumero() {
-        if (!usuarioLogado) return alert("Solo administrador");
-        if (!confirm("¿Seguro que deseas liberar este número?")) return;
-
-        await deleteDoc(doc(db, "rifa", numeroAtual));
-
-        delete dados[numeroAtual];
-
-        atualizarTela();
-        fechar();
-      }
-
-      function enviarWhats() {
-        let d = dados[numeroAtual] || {};
-
-        if (!d.telefone) {
-          alert("Digite o telefone primeiro");
-          return;
-        }
-
-        let msg = `Rifa Plan San Andrés
-Número: ${numeroAtual}
-Nombre: ${d.nome || ""}
-Teléfono: ${d.telefone}
-Total pagado: $ ${d.valor || 0}
-Falta: $ ${Math.max(0, VALOR_TOTAL - (d.valor || 0))}`;
-
-        window.open(
-          `https://wa.me/57${d.telefone}?text=${encodeURIComponent(msg)}`,
-        );
-      }
-
-      // LISTA
-      const modalLista = document.getElementById("modalLista");
-      const listaCompradores = document.getElementById("listaCompradores");
-
-      window.abrirLista = () => {
-        if (!usuarioLogado) return alert("Solo administrador");
-
-        listaCompradores.innerHTML = "";
-
-        Object.keys(dados).forEach((num) => {
-          let d = dados[num];
-
-          let item = document.createElement("div");
-          item.style.padding = "10px";
-          item.style.borderBottom = "1px solid #ddd";
-
-          item.innerHTML = `
-            <b>Número:</b> ${num}<br>
-            <b>Nombre:</b> ${d.nome || "-"}<br>
-            <b>Teléfono:</b> ${d.telefone || "-"}<br>
-            <b>Total Pagado:</b> $ ${d.valor || 0}<br>
-            <b>Estado:</b> ${d.estado}
-          `;
-
-          listaCompradores.appendChild(item);
-        });
-
-        modalLista.style.display = "block";
-      };
-
-      window.fecharLista = () => {
-        modalLista.style.display = "none";
-      };
-
-      window.salvar = salvar;
-      window.fechar = fechar;
-      window.zerarNumero = zerarNumero;
-      window.enviarWhats = enviarWhats;
-
-      carregar();
-    </script>
-  </body>
+    }
+  });
+  
+  // eventos de UI y botones
+  document.getElementById("guardarPagoBtn").onclick = guardarPago;
+  document.getElementById("whatsappBtn").onclick = enviarWhatsApp;
+  document.getElementById("liberarNumeroBtn").onclick = liberarNumero;
+  document.getElementById("cerrarModalBtn").onclick = () => { modalCompra.style.display = "none"; };
+  document.getElementById("closeListaBtn").onclick = () => { modalListaDiv.style.display = "none"; };
+  document.getElementById("verListaBtn").onclick = mostrarListaCompradores;
+  document.getElementById("resetRifaBtn").onclick = resetearTodaRifa;
+  
+  // botones de login/logout visibles siempre pero los ponemos en top (añadir botones flotantes)
+  const adminBar = document.createElement("div");
+  adminBar.style.display = "flex";
+  adminBar.style.gap = "12px";
+  adminBar.style.justifyContent = "center";
+  adminBar.style.marginBottom = "20px";
+  adminBar.style.flexWrap = "wrap";
+  const loginBtn = document.createElement("button");
+  loginBtn.innerText = "🔐 Login Admin (Google)";
+  loginBtn.style.background = "#1f6392";
+  loginBtn.onclick = () => window.login();
+  const logoutBtn = document.createElement("button");
+  logoutBtn.innerText = "🚪 Cerrar sesión";
+  logoutBtn.style.background = "#555";
+  logoutBtn.onclick = () => window.logout();
+  adminBar.appendChild(loginBtn);
+  adminBar.appendChild(logoutBtn);
+  document.querySelector(".container").insertBefore(adminBar, document.querySelector(".hero-card"));
+  
+  // también actualizar datos si cambia pago adicional en tiempo real
+  inputPago.addEventListener("input", () => {
+    if (!numeroActual) return;
+    const existente = datosNumeros[numeroActual] || { valor: 0 };
+    let extra = parseInt(inputPago.value) || 0;
+    let nuevoTotal = (existente.valor || 0) + extra;
+    if (nuevoTotal > VALOR_TOTAL_BOLETA) {
+      inputPago.style.borderColor = "red";
+    } else {
+      inputPago.style.borderColor = "#ccc";
+    }
+  });
+  
+  function actualizarConEvento() {
+    if (numeroActual) actualizarInfoPagos();
+  }
+  inputPago.addEventListener("change", actualizarConEvento);
+  
+  // inicializar
+  crearGrilla();
+  cargarDatos();
+  
+  // Prevenir cierre accidental del modal haciendo click fuera
+  window.onclick = (e) => {
+    if (e.target === modalCompra) modalCompra.style.display = "none";
+    if (e.target === modalListaDiv) modalListaDiv.style.display = "none";
+  };
+  
+  // refresh periódico cada 8s para sincronizar cambios multi-admin
+  setInterval(() => {
+    if (usuarioAdmin) cargarDatos();
+  }, 8000);
+  
+  // mejorar mensaje de whatsapp para el premio Santa Marta
+  console.log("🎉 Rifa Santa Marta - Hotel Sansiraka cargada");
+</script>
+</body>
 </html>
