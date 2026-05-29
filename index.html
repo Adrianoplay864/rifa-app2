@@ -504,7 +504,7 @@
     if (!telefonoRaw.startsWith("57")) telefonoRaw = "57" + telefonoRaw;
     const pagado = data.valor || 0;
     const saldo = VALOR_TOTAL_BOLETA - pagado;
-    const mensaje = `🏝️ *RIFA SANTA MARTA - HOTEL SANSIRAKA* 🏨\n✨ Premio: Viaje 3N/4D para 2 personas todo incluido + Tour Playa Blanca\n🎫 *Número:* ${numeroActual}\n👤 *Comprador:* ${data.nombre || "—"}\n💵 *Total pagado:* $${pagado.toLocaleString()} COP\n💰 *Saldo pendiente:* $${saldo > 0 ? saldo.toLocaleString() : 0} COP\n🎲 Sorteo con Lotería del Meta. ¡Mucha suerte! 🌟`;
+    const mensaje = `🏝️ *RIFA SANTA MARTA - HOTEL SANSIRAKA* 🏨\n✨ Premio: Viaje 3N/4D para 2 personas todo incluido + Tour Playa Blanca\n🎫 *Número:* ${numeroActual}\n👤 *Comprador:* ${data.nombre || "—"}\n💵 *Total pagado:* $${pagado.toLocaleString()} COP\n💰 *Saldo pendiente:* $${saldo > 0 ? saldo.toLocaleString() : 0} COP\n🎲 Sorteo con Lotería del Meta. 05 de Agosto ¡Mucha suerte! 🌟`;
     const url = `https://wa.me/${telefonoRaw}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
   }
